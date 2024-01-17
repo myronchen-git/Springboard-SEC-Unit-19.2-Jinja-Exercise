@@ -20,11 +20,20 @@ def root():
 def home_page():
     """Return homepage."""
 
-    return render_template("home.html", word_types=story.prompts)
+    return render_template("home.html", stories_length=len(stories), stories=stories)
 
 
-@app.route("/story", methods=["POST"])
-def story_page():
+@app.route("/story/prompt")
+def story_prompt():
+    """Returns a page that prompts the user for the words to use in a Mad Libs story."""
+
+    story_id = int(request.args["story-id"])
+
+    return render_template("prompt.html", story_id=story_id, word_types=stories[story_id].prompts)
+
+
+@app.route("/story/<int:story_id>/result", methods=["POST"])
+def story_page(story_id):
     """Return story."""
 
-    return render_template("story.html", story_text=story.generate(request.form))
+    return render_template("story.html", story_text=stories[story_id].generate(request.form))

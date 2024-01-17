@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block doc_title %}Story Prompt{% endblock %}
+
+{% block page_title %}Madlibs{% endblock %}
+
+{% block content %}
+<form action="/story/{{ story_id }}/result" method="POST">
+    {% for type in word_types %}
+    <div>
+        <label for="input-{{ type }}">{{ type }}</label>
+        <input id="input-{{ type }}" type="text" name="{{ type }}" />
+    </div>
+    {% endfor %}
+    <input type="submit" value="Submit" />
+</form>
+{% endblock %}
