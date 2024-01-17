@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, abort, redirect, render_template, request
 from flask_debugtoolbar import DebugToolbarExtension
 
 from stories import *
@@ -11,9 +11,9 @@ debug = DebugToolbarExtension(app)
 
 @app.route("/")
 def root():
-    """Uses handler for /home."""
+    """Redirect to /home."""
 
-    return home_page()
+    return redirect("/home")
 
 
 @app.route("/home")
@@ -29,11 +29,17 @@ def story_prompt():
 
     story_id = int(request.args["story-id"])
 
-    return render_template("prompt.html", story_id=story_id, word_types=stories[story_id].prompts)
+    if 0 <= story_id and story_id < len(stories):
+        return render_template("prompt.html", story_id=story_id, word_types=stories[story_id].prompts)
+    else:
+        abort(404)
 
 
 @app.route("/story/<int:story_id>/result", methods=["POST"])
 def story_page(story_id):
     """Return story."""
 
-    return render_template("story.html", story_text=stories[story_id].generate(request.form))
+    if 0 <= story_id and story_id < len(stories):
+        return render_template("story.html", story_text=stories[story_id].generate(request.form))
+    else:
+        abort(404)
